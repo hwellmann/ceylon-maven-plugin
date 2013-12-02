@@ -1,0 +1,21 @@
+<component-set>
+    <components>
+        <component>
+            <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+            <role-hint>car</role-hint>
+            <implementation>
+                org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping
+            </implementation>
+            <configuration>
+                <phases>
+                    <process-resources>
+                        org.apache.maven.plugins:maven-resources-plugin:resources
+                    </process-resources>
+                    <compile>
+                        org.omadac.ceylon:ceylon-maven-plugin:compile
+                    </compile>
+                </phases>
+            </configuration>
+        </component>
+    </components>
+</component-set>
