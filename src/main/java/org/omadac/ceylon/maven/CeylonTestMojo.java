@@ -30,7 +30,8 @@ import com.redhat.ceylon.common.Constants;
 import com.redhat.ceylon.launcher.Launcher;
 
 /**
- * Tests a Ceylon module using the "ceylon test" command.
+ * Tests one or more Ceylon modules using the "ceylon test" command.
+ * 
  * @requiresProject
  * @goal test
  */
@@ -70,14 +71,17 @@ public class CeylonTestMojo extends AbstractMojo {
     private boolean disableDefaultRepos = false;
     
     /**
-     * @parameter 
+     * Enables offline mode that will prevent connections to remote repositories.
+     * Equivalent to the <code>--offline</code> option of "ceylon run".
+     * @parameter expression="${ceylon.offline} default="false"
      */
     private boolean offline;
     
     /**
-     * @parameter 
+     * Specifies which tests will be run.
+     * @parameter expression="${ceylon.test}
      */
-    private String run;
+    private String test;
     
     
     /**
@@ -145,7 +149,12 @@ public class CeylonTestMojo extends AbstractMojo {
         }
         
         if (verbose) {
+        	// arguments are not handled correctly, see https://github.com/ceylon/ceylon-runtime/issues/18
             args.add("--verbose");
+        }
+               
+        if (offline) {
+            args.add("--offline");
         }
                
         if (sysrep != null) {
@@ -163,6 +172,12 @@ public class CeylonTestMojo extends AbstractMojo {
             	args.add(repository);        		
         	}
         }
+        
+        if (test != null) {
+        	args.add("--test");
+        	args.add(test);
+        }
+        
         
         
         for (String module : testModules) {

@@ -21,6 +21,8 @@ package org.omadac.ceylon.maven;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -44,19 +46,44 @@ public class CeylonRunMojo extends AbstractMojo {
     private String home;
     
     /**
-     * If <code>true</code>, disables the default module repositories and source directory.
-     * Equivalent to the <code>ceylonc</code>'s <code>-d</code> option.
+     * If <code>true</code>, disables the default module repositories.
+     * Equivalent to the <code>--no-default-repositories</code> option of "ceylon run".
      * 
      * @parameter expression="${ceylon.disableDefaultRepos}" default="false"
      */
     private boolean disableDefaultRepos = false;
     
+    
     /**
-     * @parameter 
+     * Ceylon working directory.
+     * 
+     * @parameter expression="${ceylon.cwd}"
+     */
+    private String workingDirectory;
+    
+    
+    /**
+     * @parameter expression="${ceylon.mavenOverrides}
+     */
+    private String mavenOverrides;
+    
+    /**
+     * System properties.
+     * 
+     * @parameter
+     */
+    private Map<String, String> properties;
+    
+    /**
+     * Enables offline mode that will prevent connections to remote repositories.
+     * Equivalent to the <code>--offline</code> option of "ceylon test".
+     * @parameter expression="${ceylon.offline} default="false"
      */
     private boolean offline;
     
     /**
+     * Specifies the fully qualified name of a toplevel method or class with no parameters.
+     * Equivalent to the <code>--run</code> option of "ceylon run".
      * @parameter 
      */
     private String run;
@@ -64,7 +91,7 @@ public class CeylonRunMojo extends AbstractMojo {
     
     /**
      * The module repositories containing dependencies.
-     * Equivalent to the <code>ceylon</code>'s <code>-rep</code> option.
+     * Equivalent to the <code>--rep</code> option of "ceylon run".
      * 
      * @parameter expression="${ceylon.repositories}"
      */
@@ -77,11 +104,11 @@ public class CeylonRunMojo extends AbstractMojo {
     
     /**
      * If <code>true</code>, the compiler generates verbose output
-     * Equivalent to the <code>ceylonc</code>'s <code>-verbose</code> option.
+     * Equivalent to the <code>--verbose</code> option of "ceylon run".
      * 
-     * @parameter expression="${ceylon.verbose}" default="false"
+     * @parameter expression="${ceylon.verbose}"
      */
-    private boolean verbose = false;
+    private String verbose;
 
     /**
      * The module to run (without versions).
@@ -100,7 +127,7 @@ public class CeylonRunMojo extends AbstractMojo {
     {
         String[] args = buildOptions();
         
-        getLog().debug("Invoking ceylon run");
+        getLog().debug("Invoking 'ceylon run'");
         
         int sc = 0;
 		try {
@@ -129,19 +156,46 @@ public class CeylonRunMojo extends AbstractMojo {
             args.add("--no-default-repositories");
         }
         
-        if (verbose) {
+        if (verbose != null) {
+        	// arguments are not handled correctly, see https://github.com/ceylon/ceylon-runtime/issues/18
             args.add("--verbose");
         }
                
+        if (offline) {
+            args.add("--offline");
+        }
+               
+        if (run != null) {
+        	args.add("--run");
+        	args.add(run);
+        }
+        
         if (sysrep != null) {
         	args.add("--sysrep");
         	args.add(sysrep);
+        }
+        
+        if (workingDirectory != null) {
+        	args.add("--cwd");
+        	args.add(workingDirectory);
+        }
+        
+        if (mavenOverrides != null) {
+        	args.add("--maven-overrides");
+        	args.add(mavenOverrides);
         }
         
         if (repositories != null) {
         	for (String repository : repositories) {
             	args.add("--rep");
             	args.add(repository);        		
+        	}
+        }
+        
+        if (properties != null) {
+        	for (Entry<String, String> entry : properties.entrySet()) {
+        		args.add("-D");
+        		args.add(String.format("%s=%s", entry.getKey(), entry.getValue()));
         	}
         }
         

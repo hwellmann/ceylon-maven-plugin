@@ -72,7 +72,7 @@ public class CeylonCompileMojo extends AbstractMojo {
      * If <code>true</code>, disables the default module repositories.
      * Equivalent to the <code>--no-default-repositories</code> option.
      * 
-     * @parameter expression="${ceylonc.disableDefaultRepos}" default="false"
+     * @parameter expression="${ceylon.disableDefaultRepos}" default="false"
      */
     protected boolean disableDefaultRepos = false;
     
@@ -86,7 +86,7 @@ public class CeylonCompileMojo extends AbstractMojo {
 
     /**
      * The module repositories containing dependencies.
-     * Equivalent to the <code>ceylonc</code>'s <code>-rep</code> option.
+     * Equivalent to the <code>-rep</code> option of "ceylon compile".
      * 
      * @parameter expression="${ceylon.repositories}"
      */
@@ -102,18 +102,20 @@ public class CeylonCompileMojo extends AbstractMojo {
     
     /**
      * Whether the build should fail if there are errors
-     * @parameter expression="${ceylonc.failOnError}" default="${true}"
+     * @parameter expression="${ceylon.failOnError}" default="true"
      */
     protected boolean failOnError = true;
     
     /**
-     * The user name to use for the output repository
+     * The user name to use for the output repository.
+     * Corresponds to the <code>--user</code> option of "ceylon compile".
      * @parameter expression="${ceylon.username}" 
      */
     protected String username;
     
     /**
      * The password to use for the output repository
+     * Corresponds to the <code>--pass</code> option of "ceylon compile".
      * @parameter expression="${ceylon.password}" 
      */
     protected String password;
