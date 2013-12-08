@@ -42,85 +42,94 @@ public class CeylonCompileMojo extends AbstractMojo {
      * 
      * @parameter expression="${ceylon.home}" default-value="${env.CEYLON_HOME}"
      */
-    private String home;
+    protected String home;
     
     /**
      * The repository in which to create the output <code>.car</code> file. 
-     * Equivalent to the <code>ceylonc</code>'s <code>-out</code> option. 
+     * Equivalent to the <code>--out</code> option of "ceylon compile". 
      *
-     * @parameter expression="${ceylonc.out}" default-value="${project.build.directory}"
+     * @parameter expression="${ceylon.out}" default-value="${project.build.directory}"
      */
-    private String out;
+    protected String out;
     
     /**
      * The directory containing ceylon source code. 
-     * Equivalent to the <code>ceylonc</code>'s <code>-src</code> option.
+     * Equivalent to the <code>--source</code> option of "ceylon compile".
      * 
-     * @parameter expression="${ceylonc.src}" default-value="${project.build.sourceDirectory}"
+     * @parameter expression="${ceylon.source}" default-value="${project.build.sourceDirectory}"
      */
-    private File src;
+    protected File source;
     
     /**
-     * If <code>true</code>, disables the default module repositories and source directory.
-     * Equivalent to the <code>ceylonc</code>'s <code>-d</code> option.
+     * The directory containing ceylon resource code. 
+     * Equivalent to the <code>--resource</code> option of "ceylon compile".
+     * 
+     * @parameter expression="${ceylon.resource}" default-value="${project.build.resources[0].directory}"
+     */
+    protected File resource;
+    
+    /**
+     * If <code>true</code>, disables the default module repositories.
+     * Equivalent to the <code>--no-default-repositories</code> option.
      * 
      * @parameter expression="${ceylonc.disableDefaultRepos}" default="false"
      */
-    private boolean disableDefaultRepos = false;
+    protected boolean disableDefaultRepos = false;
     
     /**
      * If <code>true</code>, the compiler generates verbose output
-     * Equivalent to the <code>ceylonc</code>'s <code>-verbose</code> option.
+     * Equivalent to the <code>--verbose</code> option of "ceylon compile".
      * 
-     * @parameter expression="${ceylonc.verbose}" default="false"
+     * @parameter expression="${ceylon.verbose}" default="false"
      */
-    private boolean verbose = false;
+    protected boolean verbose;
 
     /**
      * The module repositories containing dependencies.
      * Equivalent to the <code>ceylonc</code>'s <code>-rep</code> option.
      * 
-     * @parameter expression="${ceylonc.repositories}"
+     * @parameter expression="${ceylon.repositories}"
      */
-    private List<String> repositories;
+    protected List<String> repositories;
     
     /**
      * The modules to compile (without versions).
      * 
-     * @parameter expression="${ceylonc.modules}"
+     * @parameter expression="${ceylon.modules}"
+     * @required
      */
-    private List<String> modules;
+    protected List<String> modules;
     
     /**
      * Whether the build should fail if there are errors
      * @parameter expression="${ceylonc.failOnError}" default="${true}"
      */
-    private boolean failOnError = true;
+    protected boolean failOnError = true;
     
     /**
      * The user name to use for the output repository
-     * @parameter expression="${ceylonc.username}" 
+     * @parameter expression="${ceylon.username}" 
      */
-    private String username;
+    protected String username;
     
     /**
      * The password to use for the output repository
-     * @parameter expression="${ceylonc.password}" 
+     * @parameter expression="${ceylon.password}" 
      */
-    private String password;
+    protected String password;
     
     /**
      * The source file character encoding.
      * @parameter expression="${project.build.sourceEncoding}" default="${file.encoding}"
      */
-    private String encoding;
+    protected String encoding;
         
     public void execute() throws MojoExecutionException, MojoFailureException
     {
         String[] args = buildOptions();
         
-        getLog().info("ceylon.home = " + home);
-        getLog().debug("Invoking ceylon compile");
+        getLog().debug("ceylon.home = " + home);
+        getLog().debug("Invoking 'ceylon compile'");
         
         int sc = 0;
 		try {
@@ -147,8 +156,11 @@ public class CeylonCompileMojo extends AbstractMojo {
         args.add("--out");
         args.add( out);
         
-        args.add("--src");
-        args.add(src.getPath());
+        args.add("--source");
+        args.add(source.getPath());
+        
+        args.add("--resource");
+        args.add(resource.getPath());
         
         if (disableDefaultRepos) {
             args.add("--no-default-repositories");

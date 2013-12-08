@@ -8,6 +8,7 @@
 
 	<properties>
 		<ceylon.home>/opt/ceylon-1.0.0</ceylon.home>
+        <ceylon.modules>foo</ceylon.modules>
 	</properties>
 
 	<build>
@@ -24,7 +25,7 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<src>source</src>
+							<source>source</source>
 							<modules>
 								<module>foo</module>
 							</modules>

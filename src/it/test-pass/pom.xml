@@ -25,7 +25,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <src>source</src>
+                            <source>source</source>
                             <modules>
                                 <module>test.hello</module>
                             </modules>
@@ -37,9 +37,9 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <modules>
-                                <module>test.hello</module>
-                            </modules>
+                            <testModules>
+                                <testModule>test.hello</testModule>
+                            </testModules>                            
                         </configuration>
                     </execution>
                 </executions>

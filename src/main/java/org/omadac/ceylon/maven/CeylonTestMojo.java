@@ -55,17 +55,17 @@ public class CeylonTestMojo extends AbstractMojo {
     
     /**
      * The module repositories containing dependencies.
-     * Equivalent to the <code>ceylonc</code>'s <code>-rep</code> option.
+     * Equivalent to the <code>ceylon</code>'s <code>-rep</code> option.
      * 
-     * @parameter expression="${ceylonc.repositories}"
+     * @parameter expression="${ceylon.repositories}"
      */
     private List<String> repositories;
     
     /**
      * If <code>true</code>, disables the default module repositories and source directory.
-     * Equivalent to the <code>ceylonc</code>'s <code>-d</code> option.
+     * Equivalent to the <code>ceylon</code>'s <code>-d</code> option.
      * 
-     * @parameter expression="${ceylonc.disableDefaultRepos}" default="false"
+     * @parameter expression="${ceylon.disableDefaultRepos}" default="false"
      */
     private boolean disableDefaultRepos = false;
     
@@ -87,9 +87,9 @@ public class CeylonTestMojo extends AbstractMojo {
     
     /**
      * If <code>true</code>, the compiler generates verbose output
-     * Equivalent to the <code>ceylonc</code>'s <code>-verbose</code> option.
+     * Equivalent to the <code>ceylonc</code>'s <code>--verbose</code> option.
      * 
-     * @parameter expression="${ceylonc.verbose}" default="false"
+     * @parameter expression="${ceylon.verbose}" default="false"
      */
     private boolean verbose;
 
@@ -98,17 +98,17 @@ public class CeylonTestMojo extends AbstractMojo {
      * 
      * @parameter 
      */
-    private List<String> modules;
+    private List<String> testModules;
     
     /**
      * Whether the build should fail if there are errors
-     * @parameter expression="${ceylonc.failOnError}" default="${true}"
+     * @parameter expression="${ceylon.failOnError}" default="${true}"
      */
     private boolean failOnError = true;
     
     public void execute() throws MojoExecutionException, MojoFailureException
     {
-        if (modules == null || modules.isEmpty()) {
+        if (testModules == null || testModules.isEmpty()) {
             getLog().info("No modules to test");
             return;
         }
@@ -165,12 +165,8 @@ public class CeylonTestMojo extends AbstractMojo {
         }
         
         
-        if (modules != null && !modules.isEmpty()) {
-        	for (String module : modules) {
-        		args.add(module);
-        	}
-        } else {
-            getLog().info("No modules to test");   
+        for (String module : testModules) {
+        	args.add(module);
         }
         
         getLog().debug("Command line options to ceylon:");

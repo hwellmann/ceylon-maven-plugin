@@ -25,7 +25,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <src>source</src>
+                            <source>source</source>
                             <modules>
                                 <module>hello</module>
                             </modules>
@@ -39,6 +39,9 @@
                         </goals>
                         <configuration>
                             <module>hello</module>
+                            <repositories>
+                              <repository>${project.build.directory}</repository>
+                            </repositories>
                         </configuration>
                     </execution>
                 </executions>

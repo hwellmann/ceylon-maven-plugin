@@ -19,10 +19,10 @@
  */
 package org.omadac.ceylon.maven;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -30,100 +30,70 @@ import com.redhat.ceylon.common.Constants;
 import com.redhat.ceylon.launcher.Launcher;
 
 /**
- * Runs a Ceylon module using the "ceylon run" command.
- * @goal run
+ * Compiles Ceylon and Java test source code using the "ceylon compile" command.
+ * @goal testCompile
  */
-public class CeylonRunMojo extends AbstractMojo {
+public class CeylonTestCompileMojo extends CeylonCompileMojo {
     
 
     /**
-     * Ceylon home directory.
+     * The modules to compile (without versions).
      * 
-     * @parameter expression="${ceylon.home}" default-value="${env.CEYLON_HOME}"
+     * @parameter expression="${ceylon.testModules}"
+     * @required
      */
-    private String home;
+    protected List<String> testModules;
     
     /**
-     * If <code>true</code>, disables the default module repositories and source directory.
-     * Equivalent to the <code>ceylonc</code>'s <code>-d</code> option.
+     * The directory containing ceylon source code. 
+     * Equivalent to the <code>--source</code> option of "ceylon compile".
      * 
-     * @parameter expression="${ceylon.disableDefaultRepos}" default="false"
+     * @parameter expression="${ceylon.testSource}" default-value="${project.build.testSourceDirectory}"
      */
-    private boolean disableDefaultRepos = false;
-    
-    /**
-     * @parameter 
-     */
-    private boolean offline;
-    
-    /**
-     * @parameter 
-     */
-    private String run;
-    
-    
-    /**
-     * The module repositories containing dependencies.
-     * Equivalent to the <code>ceylon</code>'s <code>-rep</code> option.
-     * 
-     * @parameter expression="${ceylon.repositories}"
-     */
-    private List<String> repositories;
-    
-    /**
-     * @parameter 
-     */
-    private String sysrep;
-    
-    /**
-     * If <code>true</code>, the compiler generates verbose output
-     * Equivalent to the <code>ceylonc</code>'s <code>-verbose</code> option.
-     * 
-     * @parameter expression="${ceylon.verbose}" default="false"
-     */
-    private boolean verbose = false;
-
-    /**
-     * The module to run (without versions).
-     * 
-     * @parameter 
-     */
-    private String module;
-    
-    /**
-     * Whether the build should fail if there are errors
-     * @parameter expression="${ceylon.failOnError}" default="${true}"
-     */
-    private boolean failOnError = true;
+    protected File testSource;
     
     public void execute() throws MojoExecutionException, MojoFailureException
     {
+        if (testModules.isEmpty()) {
+            getLog().info("No test modules to compile");
+            return;
+        }
+    	
         String[] args = buildOptions();
         
-        getLog().debug("Invoking ceylon run");
+        getLog().debug("ceylon.home = " + home);
+        getLog().debug("Invoking 'ceylon compile' for test sources");
         
         int sc = 0;
 		try {
 			System.setProperty(Constants.PROP_CEYLON_HOME_DIR, home);
 			sc = Launcher.run(args);
 		} catch (Throwable e) {
-            throw new MojoExecutionException("The Ceylon runtime returned an unexpected result", e);
+            throw new MojoExecutionException("The compiler returned an unexpected result", e);
 		}
         if (sc == 1) {
             getLog().info("-------------------------------------------------------------");
-            getLog().error("EXECUTION ERRORS (see above)");
+            getLog().error("COMPILATION ERRORS (see above)");
             getLog().info("-------------------------------------------------------------");
             if (failOnError) {
                 throw new MojoFailureException("Compilation Error");
             }
         } else if (sc != 0) {
-            throw new MojoExecutionException("The Ceylon runtime returned an unexpected result");
+            throw new MojoExecutionException("The compiler returned an unexpected result");
         }
     }
 
     private String[] buildOptions() throws MojoExecutionException {
         List<String> args = new ArrayList<String>();
-        args.add("run");
+        args.add("compile");
+        args.add("--out");
+        args.add( out);
+        
+        args.add("--source");
+        args.add(testSource.getPath());
+        
+        args.add("--resource");
+        args.add(resource.getPath());
         
         if (disableDefaultRepos) {
             args.add("--no-default-repositories");
@@ -133,26 +103,31 @@ public class CeylonRunMojo extends AbstractMojo {
             args.add("--verbose");
         }
                
-        if (sysrep != null) {
-        	args.add("--sysrep");
-        	args.add(sysrep);
+        if (username != null) {
+            args.add("--user");
+            args.add(username);
+        }
+        
+        if (password != null) {
+            args.add("--pass");
+            args.add(password);
         }
         
         if (repositories != null) {
-        	for (String repository : repositories) {
-            	args.add("--rep");
-            	args.add(repository);        		
-        	}
+            for (String rep : repositories) {
+                args.add("--rep");
+                args.add(rep);
+            }
         }
         
+        if (encoding != null) {
+            args.add("--encoding");
+            args.add(encoding);
+        }
         
-        
-        if (module != null && !module.isEmpty()) {
+        for (String module : testModules) {
         	args.add(module);
-        } else {
-            throw new MojoExecutionException("No module to run. Add <module> element");   
         }
-        
         getLog().debug("Command line options to ceylon:");
         getLog().debug(args.toString());
         

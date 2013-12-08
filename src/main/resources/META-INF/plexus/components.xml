@@ -14,6 +14,9 @@
                     <compile>
                         org.omadac.ceylon:ceylon-maven-plugin:compile
                     </compile>
+                    <test-compile>
+                        org.omadac.ceylon:ceylon-maven-plugin:testCompile
+                    </test-compile>
                     <test>
                         org.omadac.ceylon:ceylon-maven-plugin:test
                     </test>
