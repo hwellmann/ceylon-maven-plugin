@@ -7,6 +7,10 @@ target
 *.war
 *.ear
 
+# Ceylon artifacts
+modules
+
+
 # Eclipse metadata
 .classpath
 .project

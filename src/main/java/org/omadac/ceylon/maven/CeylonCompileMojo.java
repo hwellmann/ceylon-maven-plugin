@@ -119,6 +119,7 @@ public class CeylonCompileMojo extends AbstractMojo {
     {
         String[] args = buildOptions();
         
+        getLog().info("ceylon.home = " + home);
         getLog().debug("Invoking ceylon compile");
         
         int sc = 0;

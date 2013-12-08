@@ -30,10 +30,11 @@ import com.redhat.ceylon.common.Constants;
 import com.redhat.ceylon.launcher.Launcher;
 
 /**
- * Runs a Ceylon module using the "ceylon run" command.
- * @goal run
+ * Tests a Ceylon module using the "ceylon test" command.
+ * @requiresProject
+ * @goal test
  */
-public class CeylonRunMojo extends AbstractMojo {
+public class CeylonTestMojo extends AbstractMojo {
     
 
     /**
@@ -42,6 +43,23 @@ public class CeylonRunMojo extends AbstractMojo {
      * @parameter expression="${ceylon.home}" default-value="${env.CEYLON_HOME}"
      */
     private String home;
+    
+    /**
+     * Build directory.
+     * 
+     * @parameter default-value="${project.build.directory}"
+     * @required
+     * @readonly
+     */
+    private String targetDir;
+    
+    /**
+     * The module repositories containing dependencies.
+     * Equivalent to the <code>ceylonc</code>'s <code>-rep</code> option.
+     * 
+     * @parameter expression="${ceylonc.repositories}"
+     */
+    private List<String> repositories;
     
     /**
      * If <code>true</code>, disables the default module repositories and source directory.
@@ -73,14 +91,14 @@ public class CeylonRunMojo extends AbstractMojo {
      * 
      * @parameter expression="${ceylonc.verbose}" default="false"
      */
-    private boolean verbose = false;
+    private boolean verbose;
 
     /**
-     * The module to run (without versions).
+     * The modules to test (without versions).
      * 
      * @parameter 
      */
-    private String module;
+    private List<String> modules;
     
     /**
      * Whether the build should fail if there are errors
@@ -90,9 +108,14 @@ public class CeylonRunMojo extends AbstractMojo {
     
     public void execute() throws MojoExecutionException, MojoFailureException
     {
+        if (modules == null || modules.isEmpty()) {
+            getLog().info("No modules to test");
+            return;
+        }
+    	
         String[] args = buildOptions();
         
-        getLog().debug("Invoking ceylon run");
+        getLog().debug("Invoking ceylon test");
         
         int sc = 0;
 		try {
@@ -115,7 +138,7 @@ public class CeylonRunMojo extends AbstractMojo {
 
     private String[] buildOptions() throws MojoExecutionException {
         List<String> args = new ArrayList<String>();
-        args.add("run");
+        args.add("test");
         
         if (disableDefaultRepos) {
             args.add("--no-default-repositories");
@@ -130,10 +153,24 @@ public class CeylonRunMojo extends AbstractMojo {
         	args.add(sysrep);
         }
         
-        if (module != null && !module.isEmpty()) {
-        	args.add(module);
+        if (repositories.isEmpty()) {
+        	args.add("--rep");
+        	args.add(targetDir);
+        }
+        else {
+        	for (String repository : repositories) {
+            	args.add("--rep");
+            	args.add(repository);        		
+        	}
+        }
+        
+        
+        if (modules != null && !modules.isEmpty()) {
+        	for (String module : modules) {
+        		args.add(module);
+        	}
         } else {
-            throw new MojoExecutionException("No module to run. Add <module> element");   
+            getLog().info("No modules to test");   
         }
         
         getLog().debug("Command line options to ceylon:");
