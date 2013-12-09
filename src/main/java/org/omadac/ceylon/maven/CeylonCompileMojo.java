@@ -128,6 +128,11 @@ public class CeylonCompileMojo extends AbstractMojo {
         
     public void execute() throws MojoExecutionException, MojoFailureException
     {
+        if (modules == null || modules.isEmpty()) {
+            getLog().info("No modules to compile");
+            return;
+        }
+    	
         String[] args = buildOptions();
         
         getLog().debug("ceylon.home = " + home);

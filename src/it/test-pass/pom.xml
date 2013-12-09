@@ -17,32 +17,12 @@
                 <artifactId>ceylon-maven-plugin</artifactId>
                 <version>0.1.0-SNAPSHOT</version>
                 <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <source>source</source>
-                            <modules>
-                                <module>test.hello</module>
-                            </modules>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-test</id>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <testModules>
-                                <testModule>test.hello</testModule>
-                            </testModules>                            
-                        </configuration>
-                    </execution>
-                </executions>
+                <configuration>
+                    <testSource>source</testSource>
+                    <testModules>
+                        <testModule>test.hello</testModule>
+                    </testModules>                            
+                </configuration>
             </plugin>
         </plugins>
     </build>

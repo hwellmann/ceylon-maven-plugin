@@ -7,8 +7,7 @@
 	<packaging>car</packaging>
 
 	<properties>
-		<ceylon.home>/opt/ceylon-1.0.0</ceylon.home>
-        <ceylon.modules>foo</ceylon.modules>
+	  <ceylon.home>/opt/ceylon-1.0.0</ceylon.home>
 	</properties>
 
 	<build>
@@ -19,18 +18,12 @@
 				<version>0.1.0-SNAPSHOT</version>
 				<extensions>true</extensions>
 				<executions>
-					<execution>
-						<id>default-compile</id>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<configuration>
-							<source>source</source>
-							<modules>
-								<module>foo</module>
-							</modules>
-						</configuration>
-					</execution>
+					<configuration>
+						<source>source</source>
+						<modules>
+							<module>foo</module>
+						</modules>
+					</configuration>
 				</executions>
 			</plugin>
 		</plugins>

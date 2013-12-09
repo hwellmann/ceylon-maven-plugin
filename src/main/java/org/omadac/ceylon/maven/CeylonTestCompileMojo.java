@@ -54,7 +54,7 @@ public class CeylonTestCompileMojo extends CeylonCompileMojo {
     
     public void execute() throws MojoExecutionException, MojoFailureException
     {
-        if (testModules.isEmpty()) {
+        if (testModules == null || testModules.isEmpty()) {
             getLog().info("No test modules to compile");
             return;
         }

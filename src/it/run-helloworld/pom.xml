@@ -17,20 +17,13 @@
                 <artifactId>ceylon-maven-plugin</artifactId>
                 <version>0.1.0-SNAPSHOT</version>
                 <extensions>true</extensions>
+                    <configuration>
+                        <source>source</source>
+                        <modules>
+                            <module>hello</module>
+                        </modules>
+                    </configuration>
                 <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <source>source</source>
-                            <modules>
-                                <module>hello</module>
-                            </modules>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>run</id>
                         <phase>test</phase>
