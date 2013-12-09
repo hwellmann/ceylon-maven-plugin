@@ -31,10 +31,10 @@ import com.redhat.ceylon.launcher.Launcher;
 
 /**
  * Compiles Ceylon and Java test source code using the "ceylon compile" command.
+ * 
  * @goal testCompile
  */
 public class CeylonTestCompileMojo extends CeylonCompileMojo {
-    
 
     /**
      * The modules to compile (without versions).
@@ -43,34 +43,35 @@ public class CeylonTestCompileMojo extends CeylonCompileMojo {
      * @required
      */
     protected List<String> testModules;
-    
+
     /**
-     * The directory containing ceylon source code. 
-     * Equivalent to the <code>--source</code> option of "ceylon compile".
+     * The directory containing ceylon source code. Equivalent to the <code>--source</code> option
+     * of "ceylon compile".
      * 
-     * @parameter expression="${ceylon.testSource}" default-value="${project.build.testSourceDirectory}"
+     * @parameter expression="${ceylon.testSource}"
+     *            default-value="${project.build.testSourceDirectory}"
      */
     protected File testSource;
-    
-    public void execute() throws MojoExecutionException, MojoFailureException
-    {
+
+    public void execute() throws MojoExecutionException, MojoFailureException {
         if (testModules == null || testModules.isEmpty()) {
             getLog().info("No test modules to compile");
             return;
         }
-    	
+
         String[] args = buildOptions();
-        
+
         getLog().debug("ceylon.home = " + home);
         getLog().debug("Invoking 'ceylon compile' for test sources");
-        
+
         int sc = 0;
-		try {
-			System.setProperty(Constants.PROP_CEYLON_HOME_DIR, home);
-			sc = Launcher.run(args);
-		} catch (Throwable e) {
+        try {
+            System.setProperty(Constants.PROP_CEYLON_HOME_DIR, home);
+            sc = Launcher.run(args);
+        }
+        catch (Throwable e) {
             throw new MojoExecutionException("The compiler returned an unexpected result", e);
-		}
+        }
         if (sc == 1) {
             getLog().info("-------------------------------------------------------------");
             getLog().error("COMPILATION ERRORS (see above)");
@@ -78,7 +79,8 @@ public class CeylonTestCompileMojo extends CeylonCompileMojo {
             if (failOnError) {
                 throw new MojoFailureException("Compilation Error");
             }
-        } else if (sc != 0) {
+        }
+        else if (sc != 0) {
             throw new MojoExecutionException("The compiler returned an unexpected result");
         }
     }
@@ -87,50 +89,50 @@ public class CeylonTestCompileMojo extends CeylonCompileMojo {
         List<String> args = new ArrayList<String>();
         args.add("compile");
         args.add("--out");
-        args.add( out);
-        
+        args.add(out);
+
         args.add("--source");
         args.add(testSource.getPath());
-        
+
         args.add("--resource");
         args.add(resource.getPath());
-        
+
         if (disableDefaultRepos) {
             args.add("--no-default-repositories");
         }
-        
+
         if (verbose) {
             args.add("--verbose");
         }
-               
+
         if (username != null) {
             args.add("--user");
             args.add(username);
         }
-        
+
         if (password != null) {
             args.add("--pass");
             args.add(password);
         }
-        
+
         if (repositories != null) {
             for (String rep : repositories) {
                 args.add("--rep");
                 args.add(rep);
             }
         }
-        
+
         if (encoding != null) {
             args.add("--encoding");
             args.add(encoding);
         }
-        
+
         for (String module : testModules) {
-        	args.add(module);
+            args.add(module);
         }
         getLog().debug("Command line options to ceylon:");
         getLog().debug(args.toString());
-        
+
         return args.toArray(new String[args.size()]);
     }
 

@@ -36,7 +36,6 @@ import com.redhat.ceylon.launcher.Launcher;
  * @goal test
  */
 public class CeylonTestMojo extends AbstractMojo {
-    
 
     /**
      * Ceylon home directory.
@@ -44,7 +43,7 @@ public class CeylonTestMojo extends AbstractMojo {
      * @parameter expression="${ceylon.home}" default-value="${env.CEYLON_HOME}"
      */
     private String home;
-    
+
     /**
      * Build directory.
      * 
@@ -53,15 +52,15 @@ public class CeylonTestMojo extends AbstractMojo {
      * @readonly
      */
     private String targetDir;
-    
+
     /**
-     * The module repositories containing dependencies.
-     * Equivalent to the <code>ceylon</code>'s <code>-rep</code> option.
+     * The module repositories containing dependencies. Equivalent to the <code>ceylon</code>'s
+     * <code>-rep</code> option.
      * 
      * @parameter expression="${ceylon.repositories}"
      */
     private List<String> repositories;
-    
+
     /**
      * If <code>true</code>, disables the default module repositories and source directory.
      * Equivalent to the <code>ceylon</code>'s <code>-d</code> option.
@@ -69,29 +68,30 @@ public class CeylonTestMojo extends AbstractMojo {
      * @parameter expression="${ceylon.disableDefaultRepos}" default="false"
      */
     private boolean disableDefaultRepos = false;
-    
+
     /**
-     * Enables offline mode that will prevent connections to remote repositories.
-     * Equivalent to the <code>--offline</code> option of "ceylon run".
+     * Enables offline mode that will prevent connections to remote repositories. Equivalent to the
+     * <code>--offline</code> option of "ceylon run".
+     * 
      * @parameter expression="${ceylon.offline} default="false"
      */
     private boolean offline;
-    
+
     /**
      * Specifies which tests will be run.
+     * 
      * @parameter expression="${ceylon.test}
      */
     private String test;
-    
-    
+
     /**
-     * @parameter 
+     * @parameter
      */
     private String sysrep;
-    
+
     /**
-     * If <code>true</code>, the compiler generates verbose output
-     * Equivalent to the <code>ceylonc</code>'s <code>--verbose</code> option.
+     * If <code>true</code>, the compiler generates verbose output Equivalent to the
+     * <code>ceylonc</code>'s <code>--verbose</code> option.
      * 
      * @parameter expression="${ceylon.verbose}" default="false"
      */
@@ -100,34 +100,35 @@ public class CeylonTestMojo extends AbstractMojo {
     /**
      * The modules to test (without versions).
      * 
-     * @parameter 
+     * @parameter
      */
     private List<String> testModules;
-    
+
     /**
      * Whether the build should fail if there are errors
+     * 
      * @parameter expression="${ceylon.failOnError}" default="${true}"
      */
     private boolean failOnError = true;
-    
-    public void execute() throws MojoExecutionException, MojoFailureException
-    {
+
+    public void execute() throws MojoExecutionException, MojoFailureException {
         if (testModules == null || testModules.isEmpty()) {
             getLog().info("No modules to test");
             return;
         }
-    	
+
         String[] args = buildOptions();
-        
+
         getLog().debug("Invoking ceylon test");
-        
+
         int sc = 0;
-		try {
-			System.setProperty(Constants.PROP_CEYLON_HOME_DIR, home);
-			sc = Launcher.run(args);
-		} catch (Throwable e) {
+        try {
+            System.setProperty(Constants.PROP_CEYLON_HOME_DIR, home);
+            sc = Launcher.run(args);
+        }
+        catch (Throwable e) {
             throw new MojoExecutionException("The Ceylon runtime returned an unexpected result", e);
-		}
+        }
         if (sc == 1) {
             getLog().info("-------------------------------------------------------------");
             getLog().error("EXECUTION ERRORS (see above)");
@@ -135,7 +136,8 @@ public class CeylonTestMojo extends AbstractMojo {
             if (failOnError) {
                 throw new MojoFailureException("Compilation Error");
             }
-        } else if (sc != 0) {
+        }
+        else if (sc != 0) {
             throw new MojoExecutionException("The Ceylon runtime returned an unexpected result");
         }
     }
@@ -143,50 +145,49 @@ public class CeylonTestMojo extends AbstractMojo {
     private String[] buildOptions() throws MojoExecutionException {
         List<String> args = new ArrayList<String>();
         args.add("test");
-        
+
         if (disableDefaultRepos) {
             args.add("--no-default-repositories");
         }
-        
+
         if (verbose) {
-        	// arguments are not handled correctly, see https://github.com/ceylon/ceylon-runtime/issues/18
+            // arguments are not handled correctly, see
+            // https://github.com/ceylon/ceylon-runtime/issues/18
             args.add("--verbose");
         }
-               
+
         if (offline) {
             args.add("--offline");
         }
-               
+
         if (sysrep != null) {
-        	args.add("--sysrep");
-        	args.add(sysrep);
+            args.add("--sysrep");
+            args.add(sysrep);
         }
-        
+
         if (repositories.isEmpty()) {
-        	args.add("--rep");
-        	args.add(targetDir);
+            args.add("--rep");
+            args.add(targetDir);
         }
         else {
-        	for (String repository : repositories) {
-            	args.add("--rep");
-            	args.add(repository);        		
-        	}
+            for (String repository : repositories) {
+                args.add("--rep");
+                args.add(repository);
+            }
         }
-        
+
         if (test != null) {
-        	args.add("--test");
-        	args.add(test);
+            args.add("--test");
+            args.add(test);
         }
-        
-        
-        
+
         for (String module : testModules) {
-        	args.add(module);
+            args.add(module);
         }
-        
+
         getLog().debug("Command line options to ceylon:");
         getLog().debug(args.toString());
-        
+
         return args.toArray(new String[args.size()]);
     }
 
