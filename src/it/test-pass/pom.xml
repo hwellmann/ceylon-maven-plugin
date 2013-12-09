@@ -21,7 +21,7 @@
                     <testSource>source</testSource>
                     <testModules>
                         <testModule>test.hello</testModule>
-                    </testModules>                            
+                    </testModules>
                 </configuration>
             </plugin>
         </plugins>
