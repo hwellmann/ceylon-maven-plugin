@@ -20,6 +20,12 @@
                     <test>
                         org.omadac.ceylon:ceylon-maven-plugin:test
                     </test>
+                    <package>
+                        org.omadac.ceylon:ceylon-maven-plugin:package
+                    </package>
+                    <install>
+                        org.apache.maven.plugins:maven-install-plugin:install
+                    </install>
                 </phases>
             </configuration>
         </component>
