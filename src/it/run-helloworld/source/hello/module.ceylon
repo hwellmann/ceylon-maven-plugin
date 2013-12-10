@@ -1,1 +1,1 @@
-module hello "1.0.0" {}
+module hello "0.1.0-SNAPSHOT" {}

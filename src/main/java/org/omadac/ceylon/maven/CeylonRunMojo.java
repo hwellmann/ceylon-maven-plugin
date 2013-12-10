@@ -112,7 +112,7 @@ public class CeylonRunMojo extends AbstractMojo {
     /**
      * The module to run (without versions).
      * 
-     * @parameter
+     * @parameter expression="${ceylon.module}"
      */
     private String module;
 
