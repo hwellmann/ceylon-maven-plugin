@@ -28,7 +28,11 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -37,53 +41,35 @@ import org.codehaus.plexus.util.FileUtils;
 /**
  * Repackages a Ceylon archive, adding missing directories and resources,
  * updating the SHA1 checksum.
- * 
- * @goal package
- * @requiresProject
  */
+@Mojo(name = "package", requiresProject = true)
 public class CeylonPackageMojo extends AbstractMojo {
 
     /**
      * Output directory of the current build.
-     * 
-     * @parameter expression="${ceylon.out}" default-value="${project.build.directory}"
      */
+    @Parameter(property = "ceylon.out", defaultValue = "${project.build.directory}")
     protected String out;
 
     /**
      * The modules to compile (without versions).
-     * 
-     * @parameter expression="${ceylon.modules}"
-     * @required
      */
+    @Parameter(property = "ceylon.modules", required = true)
     protected List<String> modules;
 
-    /**
-     * @parameter expression="${project}"
-     */
+    @Component
     private MavenProject project;
 
-    /**
-     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
-     */
+    @Component(role = Archiver.class, hint = "jar")
     private JarArchiver jarArchiver;
 
-    /**
-     * @component
-     */
+    @Component
     private ArchiverManager archiverManager;
 
-    /**
-     * @parameter expression="${session}"
-     */
+    @Component
     private MavenSession session;
 
-    /**
-     * The archive configuration to use. See <a
-     * href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
-     * 
-     * @parameter
-     */
+    @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     public void execute() throws MojoExecutionException, MojoFailureException {

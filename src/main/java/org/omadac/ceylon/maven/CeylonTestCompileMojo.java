@@ -25,32 +25,29 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import com.redhat.ceylon.common.Constants;
 import com.redhat.ceylon.launcher.Launcher;
 
 /**
  * Compiles Ceylon and Java test source code using the "ceylon compile" command.
- * 
- * @goal testCompile
  */
+@Mojo(name = "testCompile")
 public class CeylonTestCompileMojo extends CeylonCompileMojo {
 
     /**
      * The modules to compile (without versions).
-     * 
-     * @parameter expression="${ceylon.testModules}"
-     * @required
      */
+    @Parameter(property = "ceylon.testModules", required = true)
     protected List<String> testModules;
 
     /**
      * The directory containing ceylon source code. Equivalent to the <code>--source</code> option
      * of "ceylon compile".
-     * 
-     * @parameter expression="${ceylon.testSource}"
-     *            default-value="${project.build.testSourceDirectory}"
      */
+    @Parameter(property = "ceylon.testSource", defaultValue = "${project.build.testSourceDirectory}")
     protected File testSource;
 
     public void execute() throws MojoExecutionException, MojoFailureException {

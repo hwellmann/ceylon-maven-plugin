@@ -26,6 +26,8 @@ import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import com.redhat.ceylon.common.Constants;
 import com.redhat.ceylon.launcher.Launcher;
@@ -33,102 +35,89 @@ import com.redhat.ceylon.launcher.Launcher;
 /**
  * Compiles Ceylon and Java source code using the "ceylon compile" command.
  * 
- * @goal compile
  */
+@Mojo(name = "compile")
 public class CeylonCompileMojo extends AbstractMojo {
 
     /**
      * Ceylon home directory.
-     * 
-     * @parameter expression="${ceylon.home}" default-value="${env.CEYLON_HOME}"
      */
+    @Parameter(property = "ceylon.home", defaultValue = "${env.CEYLON_HOME}")
     protected String home;
 
     /**
      * The repository in which to create the output <code>.car</code> file. Equivalent to the
      * <code>--out</code> option of "ceylon compile".
-     * 
-     * @parameter expression="${ceylon.out}" default-value="${project.build.directory}"
      */
+    @Parameter(property = "ceylon.out", defaultValue = "${project.build.directory}")
     protected String out;
 
     /**
      * The directory containing ceylon source code. Equivalent to the <code>--source</code> option
      * of "ceylon compile".
-     * 
-     * @parameter expression="${ceylon.source}" default-value="${project.build.sourceDirectory}"
      */
+    @Parameter(property = "ceylon.source", defaultValue = "${project.build.sourceDirectory}")
     protected File source;
 
     /**
      * The directory containing ceylon resource code. Equivalent to the <code>--resource</code>
      * option of "ceylon compile".
-     * 
-     * @parameter expression="${ceylon.resource}"
-     *            default-value="${project.build.resources[0].directory}"
      */
+    @Parameter(property = "ceylon.resource", defaultValue = "${project.build.resources[0].directory}")
     protected File resource;
 
     /**
      * If <code>true</code>, disables the default module repositories. Equivalent to the
      * <code>--no-default-repositories</code> option.
-     * 
-     * @parameter expression="${ceylon.disableDefaultRepos}" default="false"
      */
+    @Parameter(property = "ceylon.disableDefaultRepos", defaultValue = "false")
     protected boolean disableDefaultRepos = false;
 
     /**
      * If <code>true</code>, the compiler generates verbose output Equivalent to the
      * <code>--verbose</code> option of "ceylon compile".
-     * 
-     * @parameter expression="${ceylon.verbose}" default="false"
      */
+    @Parameter(property = "ceylon.verbose", defaultValue = "false")
     protected boolean verbose;
 
     /**
      * The module repositories containing dependencies. Equivalent to the <code>-rep</code> option
      * of "ceylon compile".
-     * 
-     * @parameter expression="${ceylon.repositories}"
      */
+    @Parameter(property = "ceylon.repositories")
     protected List<String> repositories;
 
     /**
      * The modules to compile (without versions).
-     * 
-     * @parameter expression="${ceylon.modules}"
-     * @required
      */
+    @Parameter(property = "ceylon.modules", required = true)
     protected List<String> modules;
 
     /**
      * Whether the build should fail if there are errors
-     * 
-     * @parameter expression="${ceylon.failOnError}" default="true"
      */
+    @Parameter(property = "ceylon.failOnError", defaultValue = "true")
     protected boolean failOnError = true;
 
     /**
      * The user name to use for the output repository. Corresponds to the <code>--user</code> option
      * of "ceylon compile".
-     * 
-     * @parameter expression="${ceylon.username}"
      */
+    @Parameter(property = "ceylon.username")
     protected String username;
 
     /**
      * The password to use for the output repository Corresponds to the <code>--pass</code> option
      * of "ceylon compile".
-     * 
-     * @parameter expression="${ceylon.password}"
      */
+    @Parameter(property = "ceylon.password")
     protected String password;
 
     /**
      * The source file character encoding.
      * 
-     * @parameter expression="${project.build.sourceEncoding}" default="${file.encoding}"
      */
+    @Parameter(property = "project.build.sourceEncoding", defaultValue = "${file.encoding}")
     protected String encoding;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
